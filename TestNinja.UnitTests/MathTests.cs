@@ -18,7 +18,7 @@ namespace TestNinja.UnitTests
         }
 
         [Test]
-        //[Ignore("Becaue I wanted to!")]
+        //[Ignore("Because I wanted to!")]
         public void Add_WhenCalled_ReturnTheSumOfArguments()
         {
             var result = Math.Add(1, 2);
