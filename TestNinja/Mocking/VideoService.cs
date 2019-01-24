@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 
 namespace TestNinja.Mocking
 {
     public class VideoService
     {
         private IFileReader FileReader;
+        private IVideoRepository Repository;
 
-        public VideoService(IFileReader fileReader = null)
+        public VideoService(IFileReader fileReader = null, IVideoRepository repository = null)
         {
             FileReader = fileReader ?? new FileReader();
+            Repository = repository ?? new VideoRepository();
         }
 
         public string ReadVideoTitle()
@@ -24,22 +25,18 @@ namespace TestNinja.Mocking
             return video.Title;
         }
 
+        // [] => ""
+        // [{}, {}, {}] => "1,2,3"
         public string GetUnprocessedVideosAsCsv()
         {
             var videoIds = new List<int>();
 
-            using (var context = new VideoContext())
-            {
-                var videos =
-                    (from video in context.Videos
-                     where !video.IsProcessed
-                     select video).ToList();
+            var videos = Repository.GetUnprocessedVideos();
 
-                foreach (var v in videos)
-                    videoIds.Add(v.Id);
+            foreach (var v in videos)
+                videoIds.Add(v.Id);
 
-                return String.Join(",", videoIds);
-            }
+            return String.Join(",", videoIds);
         }
     }
 
